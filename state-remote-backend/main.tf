@@ -7,4 +7,7 @@ resource "aws_instance" "name" {
   instance_type = "t3.micro"
 }
 
-
+resource "aws_instance" "name" {
+  ami = "ami-0ec10929233384c7f"
+  instance_type = "t3.micro"
+}
