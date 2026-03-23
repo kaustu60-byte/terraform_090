@@ -80,3 +80,35 @@ resource "aws_vpc_security_group_egress_rule" "dev" {
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "-1" # semantically equivalent to all ports
 }
+
+
+# Elastic IP for NAT Gateway
+resource "aws_eip" "nat_eip" {
+  domain = "vpc"
+}
+
+# NAT Gateway
+resource "aws_nat_gateway" "nat-dev" {
+  subnet_id     = aws_subnet.dev-public-subnet.id
+  allocation_id = aws_eip.nat_eip.id
+
+  tags = {
+    Name = "gw NAT"
+  }
+}
+
+# Route Table for Private Subnet
+resource "aws_route_table" "nat-dev" {
+  vpc_id = aws_vpc.dev.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat-dev.id
+  }
+}
+
+# Associate Route Table with Private Subnet
+resource "aws_route_table_association" "dev-private" {
+  route_table_id = aws_route_table.nat-dev.id
+  subnet_id      = aws_subnet.dev-private-subnet.id
+}
