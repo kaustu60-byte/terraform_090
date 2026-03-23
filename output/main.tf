@@ -12,4 +12,10 @@ resource "aws_s3_bucket_versioning" "versioning_example" {
   versioning_configuration {
     status = "Enabled"
   }
+
+  
+}
+
+resource "aws_security_group" "name" {
+  name = "ec2-sg"
 }
